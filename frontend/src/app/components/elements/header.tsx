@@ -1,4 +1,4 @@
-import FlutterDashIcon from "@mui/icons-material/FlutterDash";
+import TwitterIcon from "@mui/icons-material/Twitter";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -18,12 +18,12 @@ export const Header = () => {
               <IconButton sx={{ p: 0 }}>
                 <Avatar
                   alt="Remy Sharp"
-                  src="https://img.benesse-cms.jp/pet-cat/item/image/normal/f3978ebc-9030-49e7-aa5e-4a370a955e1b.jpg?w=1200&h=1200&resize_type=cover&resize_mode=force"
+                  src="https://kotonohaworks.com/free-icons/wp-content/uploads/kkrn_icon_user_1-768x768.png"
                 />
               </IconButton>
             </Tooltip>
           </Box>
-          <FlutterDashIcon />
+          <TwitterIcon />
           <Typography
             variant="h5"
             noWrap
