@@ -1,0 +1,12 @@
+{
+  "body": "{\"message\": \"hello world\"}",
+  "resource": "/hello",
+  "path": "/api/upload_url",
+  "httpMethod": "POST",
+  "isBase64Encoded": false,
+  "requestContext": {
+    "path": "/api/upload_url",
+    "resourcePath": "/hello",
+    "httpMethod": "POST"
+  }
+}

@@ -1,16 +1,49 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  python3.12
+  Twitter like snsのテンプレートファイル
 
-  Sample SAM Template for sam-app
-
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 30
+
+Parameters:
+  StageName:
+    Type: "String"
+    Default: "v1"
+  Domain:
+    Type: String
+    # TODO: ドメイン名を指定する
+    Default: ""
+  TweetsTableName:
+    Type: String
+    Default: "Tweets"
 
 Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref StageName
+      MethodSettings:
+        - DataTraceEnabled: false
+          LoggingLevel: "INFO"
+          ResourcePath: "/*"
+          HttpMethod: "*"
+      # Auth:
+      #   DefaultAuthorizer: MyLambdaTokenAuthorizer
+      #   Authorizers:
+      #     MyLambdaTokenAuthorizer:
+      #       FunctionArn: !GetAtt AuthFunction.Arn
+      # DefinitionBody:
+      #   Fn::Transform:
+      #     Name: AWS::Include
+      #     Parameters:
+      #       Location: ../../docs/openapi/openapi.yaml
+      # GatewayResponses:
+      #   BAD_REQUEST_BODY:
+      #     StatusCode: 400
+      #     ResponseTemplates:
+      #       "application/json": '{"errorCode": "INVALID_REQUEST","message": "Your request is invalid. Please check it out."}'
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -26,12 +59,100 @@ Resources:
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: ./hello_world
-      DockerTag: python3.12-v1
+
+  GeneratePresignedUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - S3CrudPolicy:
+            BucketName: twitter-like-storage
+      PackageType: Image
+      Events:
+        GeneratePresignedUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /api/upload_url
+            Method: post
+    Metadata:
+      Dockerfile: ./presigned_url/Dockerfile
+      DockerContext: ./
+      DockerTag: python3.9-v1
+
+  GenerateDownloadUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess
+        - S3CrudPolicy:
+            BucketName: twitter-like-storage
+      PackageType: Image
+      Events:
+        GenerateDownloadUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /api/download_url
+            Method: post
+    Metadata:
+      Dockerfile: ./presigned_url/Dockerfile
+      DockerContext: ./
+      DockerTag: python3.9-v1
+
+  TwitterLikeSnsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TweetsTableName
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: tweet_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: tweet_id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  S3:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: twitter-like-storage
+      VersioningConfiguration:
+        Status: Enabled
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - POST
+              - GET
+            AllowedOrigins:
+              - !Ref Domain
+            MaxAge: 3000
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  GeneratePresignedUrlApi:
+    Description: "API Gateway endpoint URL for Prod stage for Generate Presigned Url function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/upload_url/"
+  GenerateDownloadUrlApi:
+    Description: "API Gateway endpoint URL for Prod stage for Generate Download Url function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/download_url/"
+  GeneratePresignedUrlFunction:
+    Description: "Generate Presigned Url Lambda Function ARN"
+    Value: !GetAtt GeneratePresignedUrlFunction.Arn
+  GenerateDownloadUrlFunction:
+    Description: "Generate Download Url Lambda Function ARN"
+    Value: !GetAtt GenerateDownloadUrlFunction.Arn
+  GeneratePresignedUrlFunctionIamRole:
+    Description: "Implicit IAM Role created for Generate Presigned Url function"
+    Value: !GetAtt GeneratePresignedUrlFunctionRole.Arn
+  GenerateDownloadUrlFunctionIamRole:
+    Description: "Implicit IAM Role created for Generate Download Url function"
+    Value: !GetAtt GenerateDownloadUrlFunctionRole.Arn
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
