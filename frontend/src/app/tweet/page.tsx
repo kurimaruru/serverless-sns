@@ -17,7 +17,7 @@ const _CreateTweet = ({}) => {
       id: uuidv4(),
       tweetInfo: {
         userName: "testUser",
-        created_at: new Date().toISOString().slice(0, 19).replace("T", " "),
+        createdAt: new Date().toISOString().slice(0, 19).replace("T", " "),
       },
       tweetContent: {
         message: tweet.tweetContent.message,

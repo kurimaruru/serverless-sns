@@ -5,14 +5,14 @@ export function POST() {
     {
       id: "test1",
       tweetInfo: {
-        user_name: "test1",
-        subheader: "2022/10/1",
+        userName: "test1",
+        createdAt: "2022/10/1",
       },
       tweetContent: {
         message:
           "This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with themussels, if you like.",
         imgName: "cat.jpg",
-        imgUrl: undefined,
+        imgUrl: "https://news.walkerplus.com/article/1023800/10210444_615.jpg",
       },
       tweetUserAction: {
         good: 3,
@@ -23,14 +23,15 @@ export function POST() {
     {
       id: "test2",
       tweetInfo: {
-        user_name: "test2",
-        subheader: "2022/10/5",
+        userName: "test2",
+        createdAt: "2022/10/5",
       },
       tweetContent: {
         message:
           "This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with themussels, if you like.",
         imgName: "cat2.jpg",
-        imgUrl: undefined,
+        imgUrl:
+          "https://dol.ismcdn.jp/mwimgs/5/d/600/img_7e0b8adba77c91687a8078920dedc7be160077.jpg",
       },
       tweetUserAction: {
         good: 2,
@@ -41,14 +42,15 @@ export function POST() {
     {
       id: "test3",
       tweetInfo: {
-        user_name: "test3",
-        subheader: "2022/10/10",
+        userName: "test3",
+        createdAt: "2022/10/10",
       },
       tweetContent: {
         message:
           "This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with themussels, if you like.",
         imgName: "flower.jpeg",
-        imgUrl: undefined,
+        imgUrl:
+          "https://user0514.cdnw.net/shared/img/thumb/AMENEKO8474_TP_V.jpg",
       },
       tweetUserAction: {
         good: 1,
@@ -59,14 +61,15 @@ export function POST() {
     {
       id: "test4",
       tweetInfo: {
-        user_name: "test4",
-        subheader: "2022/10/15",
+        userName: "test4",
+        createdAt: "2022/10/15",
       },
       tweetContent: {
         message:
           "This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with themussels, if you like.",
         imgName: "flower2.jpeg",
-        imgUrl: undefined,
+        imgUrl:
+          "https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554_1280.jpg",
       },
       tweetUserAction: {
         good: 0,

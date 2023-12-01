@@ -10,7 +10,7 @@ export type tweetData = {
 
 export type tweetInfo = {
   userName: string;
-  created_at: string;
+  createdAt: string;
 };
 
 export type tweetContent = {
