@@ -3,44 +3,15 @@
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { Avatar, Button, Grid, Input, TextareaAutosize } from "@mui/material";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { v4 as uuidv4 } from "uuid";
+import { useForm } from "react-hook-form";
 import { StyledFab } from "../components/elements/styledFab";
 import { tweetData } from "../type/types";
+import { useCreateTweet } from "./tweet.hooks";
 
 const _CreateTweet = ({}) => {
-  const router = useRouter();
-  const handleSubmitAction: SubmitHandler<tweetData> = async (tweet) => {
-    tweet = {
-      id: uuidv4(),
-      tweetInfo: {
-        userName: "testUser",
-        createdAt: new Date().toISOString().slice(0, 19).replace("T", " "),
-      },
-      tweetContent: {
-        message: tweet.tweetContent.message,
-        imgName: "testImage",
-        imgUrl: "testUrl",
-      },
-      tweetUserAction: {
-        good: 0,
-        bad: 0,
-      },
-      userId: "testUserId",
-    };
-
-    const res = await fetch("http://localhost:3000/api/tweet", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(tweet),
-    });
-    console.log("★★★★★★★★★★★", res.json());
-    router.push("/home");
-  };
+  const { handleSubmitAction, onChangeFileInput, binaryForImgData, image } =
+    useCreateTweet();
 
   const {
     register,
@@ -58,26 +29,7 @@ const _CreateTweet = ({}) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch("tweetContent.message")]);
-  // プレビュー表示
-  const [binary, setBinay] = useState<string | ArrayBuffer | null | undefined>(
-    null
-  );
-  const [image, setImage] = useState<Blob | undefined>();
-  const onChangeFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files?.length === 0) {
-      return;
-    }
-    if (!event.target.files?.[0].type.match("image.*")) {
-      return;
-    }
-    setImage(event.target.files?.[0]);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setBinay(e.target?.result);
-    };
-    console.log("preview");
-    reader.readAsDataURL(event.target?.files[0]);
-  };
+
   return (
     <>
       <form onSubmit={handleSubmit(handleSubmitAction)}>
@@ -116,9 +68,9 @@ const _CreateTweet = ({}) => {
           {...register("tweetContent.message", { required: true })}
         />
         {errors.tweetContent && <span>This field is required</span>}
-        {!!binary && (
+        {!!binaryForImgData && (
           <img
-            src={`${binary}`}
+            src={`${binaryForImgData}`}
             alt="B64image"
             style={{ width: "100%", height: "40vh", objectFit: "contain" }}
           />
