@@ -14,9 +14,9 @@ import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/system";
-import { Suspense, useState } from "react";
-import { ProgressCircle } from "../elements/progressCircle";
-import { StyledMenu } from "../elements/styledMenu";
+import { useState } from "react";
+import { StyledMenu } from "../../elements/styledMenu";
+import { fetchTweetImagge } from "./tweetCard.hooks";
 
 type Props = {
   tweet: tweetData;
@@ -31,6 +31,9 @@ export const TweetCard = (props: Props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const { imageUrl } = fetchTweetImagge(props.tweet);
+
   return (
     <Card>
       <CardHeader
@@ -56,27 +59,25 @@ export const TweetCard = (props: Props) => {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem style={{ color: "red" }}>delete</MenuItem>
+              <MenuItem style={{ color: "red" }}>削除</MenuItem>
             </StyledMenu>
           </>
         }
         title={props.tweet.id}
         subheader={props.tweet.tweetInfo.createdAt}
       />
-      <Suspense fallback={<ProgressCircle />}>
-        <CardMedia
-          component="img"
-          height="200"
-          image={props.tweet.tweetContent.imgUrl}
-          alt="image"
-          style={{ objectFit: "contain" }}
-        />
-      </Suspense>
       <CardContent>
         <Typography variant="body2" color="text.secondary">
           {props.tweet.tweetContent.message}
         </Typography>
       </CardContent>
+      <CardMedia
+        component="img"
+        height="200"
+        image={imageUrl}
+        alt="image"
+        style={{ objectFit: "contain" }}
+      />
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
           <ThumbUpAltIcon />

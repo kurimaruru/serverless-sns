@@ -16,7 +16,6 @@ export type tweetInfo = {
 export type tweetContent = {
   message: string;
   imgName: string;
-  imgUrl: string;
 };
 
 export type userAction = {
