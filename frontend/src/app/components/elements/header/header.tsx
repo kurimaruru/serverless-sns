@@ -10,7 +10,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import type { Session } from "next-auth";
 import { useState } from "react";
-import { HeaderMenu } from "./headerMenu";
+import { HeaderMenu } from "../headerMenu/headerMenu";
 
 type Props = {
   session: Session | null;

@@ -5,7 +5,7 @@ import { Avatar, Button, Grid, Input, TextareaAutosize } from "@mui/material";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { StyledFab } from "../components/elements/styledFab";
+import { StyledFab } from "../components/elements/styledFab/styledFab";
 import { tweetData } from "../type/types";
 import { useCreateTweet } from "./tweet.hooks";
 

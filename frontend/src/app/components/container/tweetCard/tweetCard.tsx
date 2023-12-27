@@ -16,7 +16,7 @@ import Typography from "@mui/material/Typography";
 import { Box } from "@mui/system";
 import type { Session } from "next-auth";
 import { useState } from "react";
-import { StyledMenu } from "../../elements/styledMenu";
+import { StyledMenu } from "../../elements/styledMenu/styledMenu";
 import { fetchTweetImagge } from "./tweetCard.hooks";
 
 type Props = {
