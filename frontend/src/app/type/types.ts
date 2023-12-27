@@ -22,3 +22,13 @@ export type userAction = {
   good: number;
   bad: number;
 };
+
+export type ValidSession = {
+  user: {
+    name: string;
+    email: string;
+    image: string;
+  };
+  expires: string;
+  appAccessToken: string;
+};

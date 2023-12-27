@@ -14,12 +14,14 @@ import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/system";
+import type { Session } from "next-auth";
 import { useState } from "react";
 import { StyledMenu } from "../../elements/styledMenu";
 import { fetchTweetImagge } from "./tweetCard.hooks";
 
 type Props = {
   tweet: tweetData;
+  session: Session | null;
 };
 
 export const TweetCard = (props: Props) => {
@@ -38,12 +40,16 @@ export const TweetCard = (props: Props) => {
     <Card>
       <CardHeader
         avatar={
-          <Avatar
-            sx={{ objectFit: "contain" }}
-            aria-label="recipe"
-            // TODO：ユーザー登録機能を実装したら、ユーザーに応じたアイコンを表示するようにする
-            src="https://kotonohaworks.com/free-icons/wp-content/uploads/kkrn_icon_user_1-768x768.png"
-          />
+          props.session && props.session.user ? (
+            <Avatar alt="Remy Sharp" src={props.session.user.image ?? ""} />
+          ) : (
+            <Avatar
+              alt="Remy Sharp"
+              src={
+                "https://kotonohaworks.com/free-icons/wp-content/uploads/kkrn_icon_user_1-768x768.png"
+              }
+            />
+          )
         }
         action={
           <>
