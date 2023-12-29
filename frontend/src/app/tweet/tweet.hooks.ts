@@ -1,3 +1,5 @@
+import type { Session } from "next-auth";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
@@ -5,20 +7,22 @@ import { v4 as uuidv4 } from "uuid";
 import { tweetData } from "../type/types";
 
 /** tweet生成するためのhooks */
-export const useCreateTweet = () => {
+export const useCreateTweet = (session: Session | null) => {
   const router = useRouter();
   const [binaryForImgData, setBinay] = useState<
     string | ArrayBuffer | null | undefined
   >(null);
   const [image, setImage] = useState<Blob | undefined>();
+  const id = uuidv4();
 
   /** tweet生成のapi */
   const handleSubmitAction: SubmitHandler<tweetData> = async (
     tweet: tweetData
   ): Promise<void> => {
-    const uploadUrl = await getUploadUrl("testUserId", "hogehogehoge");
-    putTweetImageToStorage(uploadUrl, image as Blob);
-    const tweetReqData = createTweetRequestData(tweet);
+    const uploadUrl = await getUploadUrl(session, id);
+    if (image !== undefined && uploadUrl !== null)
+      putTweetImageToStorage(uploadUrl, image as Blob);
+    const tweetReqData = await createTweetRequestData(id, tweet, session);
     try {
       const res = await fetch("http://localhost:3000/api/tweet", {
         method: "POST",
@@ -49,7 +53,6 @@ export const useCreateTweet = () => {
     reader.onload = (e) => {
       setBinay(e.target?.result);
     };
-    console.log("preview");
     reader.readAsDataURL(event.target?.files[0]);
   };
   return {
@@ -60,40 +63,58 @@ export const useCreateTweet = () => {
   };
 };
 
-const createTweetRequestData = (tweet: tweetData): tweetData => {
+const createTweetRequestData = async (
+  id: string,
+  tweet: tweetData,
+  session: Session | null
+): Promise<tweetData | null> => {
+  if (session === null || session.user === undefined) return null;
+
   const requestData = {
-    id: uuidv4(),
+    id,
     tweetInfo: {
-      userName: "testUser",
+      userName: session.user.name!,
       createdAt: new Date().toISOString().slice(0, 19).replace("T", " "),
     },
     tweetContent: {
       message: tweet.tweetContent.message,
-      imgName: "testImage",
-      imgUrl: "testUrl",
+      imgName: tweet.tweetContent.imgName,
     },
     tweetUserAction: {
       good: 0,
-      bad: 0,
+      comments: [],
     },
-    userId: "testUserId",
+    userId: session.user.email!,
   };
   return requestData;
 };
 
 const getUploadUrl = async (
-  userId: string,
+  session: Session | null,
   tweetId: string
-): Promise<string> => {
-  const res = await fetch("http://localhost:3000/api/getUploadUrl", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId, tweetId }),
-  });
-  const data = await res.json();
-  return data.presignedUrl;
+): Promise<string | null> => {
+  if (session === null || session.user === undefined) return null;
+  if (process.env.NEXT_PUBLIC__ENV === "local") {
+    const res = await fetch("http://localhost:3000/api/getUploadUrl", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: session.user.email, tweetId }),
+    });
+    const data = await res.json();
+    return data.presignedUrl;
+  } else {
+    const res = await fetch("http://localhost:3000/api/getUploadUrl", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: session.user.email, tweetId }),
+    });
+    const data = await res.json();
+    return data.presignedUrl;
+  }
 };
 
 const putTweetImageToStorage = async (
@@ -109,9 +130,11 @@ const putTweetImageToStorage = async (
   if (process.env.NEXT_PUBLIC__ENV === "local") {
     console.log("アップロード完了");
   } else {
-    const res = await fetch(uploadUrl, {
+    await fetch(uploadUrl, {
       method: "PUT",
-      body: image!,
+      body: binaryData!,
+    }).catch((e) => {
+      throw new Error("Failed to upload image");
     });
   }
 };

@@ -1,5 +1,6 @@
 "use client";
 
+import { sessionState } from "@/app/store/session";
 import { tweetData } from "@/app/type/types";
 import { ChatBubbleOutline, Favorite } from "@mui/icons-material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -15,7 +16,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/system";
 import type { Session } from "next-auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import { StyledMenu } from "../../elements/styledMenu/styledMenu";
 import { fetchTweetImagge } from "./tweetCard.hooks";
 
@@ -25,6 +27,12 @@ type Props = {
 };
 
 export const TweetCard = (props: Props) => {
+  const [session, setSession] = useRecoilState(sessionState);
+  useEffect(() => {
+    if (session === null) {
+      setSession(props.session);
+    }
+  }, []);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -35,7 +43,6 @@ export const TweetCard = (props: Props) => {
   };
 
   const { imageUrl } = fetchTweetImagge(props.tweet);
-  console.log(imageUrl);
 
   return (
     <Card>

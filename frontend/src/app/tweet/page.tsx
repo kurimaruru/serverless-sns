@@ -5,13 +5,16 @@ import { Avatar, Button, Grid, Input, TextareaAutosize } from "@mui/material";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRecoilValue } from "recoil";
 import { StyledFab } from "../components/elements/styledFab/styledFab";
+import { sessionState } from "../store/session";
 import { tweetData } from "../type/types";
 import { useCreateTweet } from "./tweet.hooks";
 
 const _CreateTweet = ({}) => {
+  const session = useRecoilValue(sessionState);
   const { handleSubmitAction, onChangeFileInput, binaryForImgData, image } =
-    useCreateTweet();
+    useCreateTweet(session);
 
   const {
     register,
@@ -51,10 +54,16 @@ const _CreateTweet = ({}) => {
             </Button>
           </Grid>
         </Grid>
-        <Avatar
-          src="https://img.benesse-cms.jp/pet-cat/item/image/normal/f3978ebc-9030-49e7-aa5e-4a370a955e1b.jpg?w=1200&h=1200&resize_type=cover&resize_mode=force"
-          style={{ marginLeft: "3px" }}
-        />
+        {session && session.user ? (
+          <Avatar alt="Remy Sharp" src={session.user.image ?? ""} />
+        ) : (
+          <Avatar
+            alt="Remy Sharp"
+            src={
+              "https://kotonohaworks.com/free-icons/wp-content/uploads/kkrn_icon_user_1-768x768.png"
+            }
+          />
+        )}
         <TextareaAutosize
           maxRows={4}
           placeholder="いまどうしてる？"
