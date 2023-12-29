@@ -20,7 +20,7 @@ export type tweetContent = {
 
 export type userAction = {
   good: number;
-  bad: number;
+  comments: string[];
 };
 
 export type ValidSession = {

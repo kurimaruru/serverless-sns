@@ -15,7 +15,6 @@ export function POST() {
       },
       tweetUserAction: {
         good: 3,
-        bad: 0,
       },
       userId: "test111",
     },
@@ -32,7 +31,6 @@ export function POST() {
       },
       tweetUserAction: {
         good: 2,
-        bad: 1,
       },
       userId: "test222",
     },
@@ -49,7 +47,6 @@ export function POST() {
       },
       tweetUserAction: {
         good: 1,
-        bad: 0,
       },
       userId: "test333",
     },
@@ -66,7 +63,6 @@ export function POST() {
       },
       tweetUserAction: {
         good: 0,
-        bad: 2,
       },
       userId: "test444",
     },

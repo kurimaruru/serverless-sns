@@ -1,9 +1,9 @@
 "use client";
 
 import { tweetData } from "@/app/type/types";
+import { ChatBubbleOutline, Favorite } from "@mui/icons-material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import { Skeleton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -35,6 +35,7 @@ export const TweetCard = (props: Props) => {
   };
 
   const { imageUrl } = fetchTweetImagge(props.tweet);
+  console.log(imageUrl);
 
   return (
     <Card>
@@ -72,27 +73,34 @@ export const TweetCard = (props: Props) => {
         title={props.tweet.id}
         subheader={props.tweet.tweetInfo.createdAt}
       />
-      <CardContent>
+      <CardContent sx={{ mr: 3, ml: 3 }}>
         <Typography variant="body2" color="text.secondary">
           {props.tweet.tweetContent.message}
         </Typography>
       </CardContent>
-      <CardMedia
-        component="img"
-        height="200"
-        image={imageUrl}
-        alt="image"
-        style={{ objectFit: "contain" }}
-      />
-      <CardActions disableSpacing>
+      {imageUrl ? (
+        <CardMedia
+          component="img"
+          height="200"
+          image={imageUrl}
+          alt="image"
+          style={{ objectFit: "contain" }}
+        />
+      ) : (
+        <Skeleton variant="rectangular" height={200} />
+      )}
+      <CardActions sx={{ mr: 3, ml: 3 }}>
         <IconButton aria-label="add to favorites">
-          <ThumbUpAltIcon />
+          <ChatBubbleOutline />
+        </IconButton>
+        <IconButton aria-label="add to favorites">
+          <Favorite
+            style={{
+              color: props.tweet.tweetUserAction.good > 0 ? "red" : "gray",
+            }}
+          />
         </IconButton>
         <Box>{props.tweet.tweetUserAction.good}</Box>
-        <IconButton aria-label="share">
-          <ThumbDownAltIcon />
-        </IconButton>
-        <Box>{props.tweet.tweetUserAction.bad}</Box>
       </CardActions>
     </Card>
   );
