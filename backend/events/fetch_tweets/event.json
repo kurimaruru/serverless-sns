@@ -1,0 +1,10 @@
+{
+  "body": "{\"userIds\": [\"testId123\"]}",
+  "path": "/api/fetch_tweet",
+  "httpMethod": "POST",
+  "isBase64Encoded": false,
+  "requestContext": {
+    "path": "/api/fetch_tweet",
+    "httpMethod": "POST"
+  }
+}

@@ -1,10 +1,10 @@
 {
   "body": "{\"userId\": \"testId123\",\"tweetId\": \"tweetIdABCDE\"}",
-  "path": "/api/upload_url",
+  "path": "/api/download_url",
   "httpMethod": "POST",
   "isBase64Encoded": false,
   "requestContext": {
-    "path": "/api/upload_url",
+    "path": "/api/download_url",
     "httpMethod": "POST"
   }
 }

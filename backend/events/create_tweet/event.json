@@ -1,0 +1,10 @@
+{
+  "body": "{\"userId\": \"testId123\",\"id\": \"tweetIdABCDE\",\"tweetInfo\": \"info\",\"tweetContent\": \"content\",\"tweetUserAction\": \"action\"}",
+  "path": "/api/create_tweet",
+  "httpMethod": "POST",
+  "isBase64Encoded": false,
+  "requestContext": {
+    "path": "/api/create_tweet",
+    "httpMethod": "POST"
+  }
+}

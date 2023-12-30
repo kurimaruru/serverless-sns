@@ -1,25 +1,21 @@
 import json
 import logging
 
-from download_url_handler import handler as download_url_handler
-from upload_url_handler import handler as upload_url_handler
+from create_tweet_handler import create_tweet_handler
+from fetch_tweet_handler import fetch_tweet_handler
 
 
 def handler(event, context):
-    """
-    署名付きURLの発行ラムダ.
-    """
+    """tweet作成ラムダ."""
     handler_mapping = {
-        "/api/download_url": download_url_handler,
-        "/api/upload_url": upload_url_handler,
+        "/api/create_tweet": create_tweet_handler,
+        "/api/fetch_tweet": fetch_tweet_handler,
     }
     try:
         path = event["path"]
         payload = json.loads(event["body"])
-
         handler = handler_mapping[path]
         result = handler(payload)
-
         status_code = 200
 
     except Exception as e:

@@ -26,39 +26,8 @@ Resources:
       StageName: !Ref StageName
       MethodSettings:
         - DataTraceEnabled: false
-          LoggingLevel: "INFO"
           ResourcePath: "/*"
           HttpMethod: "*"
-      # Auth:
-      #   DefaultAuthorizer: MyLambdaTokenAuthorizer
-      #   Authorizers:
-      #     MyLambdaTokenAuthorizer:
-      #       FunctionArn: !GetAtt AuthFunction.Arn
-      # DefinitionBody:
-      #   Fn::Transform:
-      #     Name: AWS::Include
-      #     Parameters:
-      #       Location: ../../docs/openapi/openapi.yaml
-      # GatewayResponses:
-      #   BAD_REQUEST_BODY:
-      #     StatusCode: 400
-      #     ResponseTemplates:
-      #       "application/json": '{"errorCode": "INVALID_REQUEST","message": "Your request is invalid. Please check it out."}'
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      PackageType: Image
-      Architectures:
-        - x86_64
-      Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /hello
-            Method: get
-    Metadata:
-      Dockerfile: Dockerfile
-      DockerContext: ./hello_world
 
   GeneratePresignedUrlFunction:
     Type: AWS::Serverless::Function
@@ -74,45 +43,57 @@ Resources:
             RestApiId: !Ref MyApi
             Path: /api/upload_url
             Method: post
-    Metadata:
-      Dockerfile: ./presigned_url/Dockerfile
-      DockerContext: ./
-      DockerTag: python3.9-v1
-
-  GenerateDownloadUrlFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Policies:
-        - arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess
-        - S3CrudPolicy:
-            BucketName: twitter-like-storage
-      PackageType: Image
-      Events:
         GenerateDownloadUrl:
           Type: Api
           Properties:
             RestApiId: !Ref MyApi
             Path: /api/download_url
             Method: post
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: "test"
+          S3_ENDPOINT_URL: "http://minio:9999"
+          DYNAMO_ENDPOINT_URL: "http://dynamodb-local:8000"
     Metadata:
       Dockerfile: ./presigned_url/Dockerfile
       DockerContext: ./
       DockerTag: python3.9-v1
 
-  TwitterLikeSnsTable:
+  TweetActionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      PackageType: Image
+      Events:
+        CreateTweet:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /api/tweet
+            Method: post
+      Environment:
+        Variables:
+          DYNAMO_ENDPOINT_URL: "http://dynamodb-local:8000"
+    Metadata:
+      Dockerfile: ./tweet/Dockerfile
+      DockerContext: ./
+      DockerTag: python3.9-v1
+
+  Tweets:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Ref TweetsTableName
       AttributeDefinitions:
         - AttributeName: user_id
           AttributeType: S
-        - AttributeName: tweet_id
+        - AttributeName: id
           AttributeType: S
       KeySchema:
         - AttributeName: user_id
           KeyType: HASH
-        - AttributeName: tweet_id
-          KeyType: HASH
+        - AttributeName: id
+          KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
@@ -146,19 +127,10 @@ Outputs:
     Value: !GetAtt GeneratePresignedUrlFunction.Arn
   GenerateDownloadUrlFunction:
     Description: "Generate Download Url Lambda Function ARN"
-    Value: !GetAtt GenerateDownloadUrlFunction.Arn
+    Value: !GetAtt GeneratePresignedUrlFunction.Arn
   GeneratePresignedUrlFunctionIamRole:
     Description: "Implicit IAM Role created for Generate Presigned Url function"
     Value: !GetAtt GeneratePresignedUrlFunctionRole.Arn
   GenerateDownloadUrlFunctionIamRole:
     Description: "Implicit IAM Role created for Generate Download Url function"
-    Value: !GetAtt GenerateDownloadUrlFunctionRole.Arn
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+    Value: !GetAtt GeneratePresignedUrlFunctionRole.Arn
