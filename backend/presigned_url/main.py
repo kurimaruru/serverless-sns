@@ -31,6 +31,10 @@ def handler(event, context):
         return {
             "isBase64Encoded": False,
             "statusCode": status_code,
-            "headers": {"Access-Control-Allow-Origin": "*"},
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS, POST",
+                "Access-Control-Allow-Headers": "Content-Type",
+            },
             "body": json.dumps(result),
         }

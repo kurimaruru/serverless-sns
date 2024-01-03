@@ -1,4 +1,5 @@
 import { tweetData } from "@/app/type/types";
+import { apiClient } from "@/app/utils/baseApi";
 import { useEffect, useState } from "react";
 
 export const fetchTweetImagge = (tweet: tweetData) => {
@@ -6,20 +7,17 @@ export const fetchTweetImagge = (tweet: tweetData) => {
 
   useEffect(() => {
     const fetchImage = async () => {
-      const res = await fetch("http://localhost:3000/api/downloadUrl", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const res = await apiClient(
+        "/api/download_url",
+        "POST",
+        "force-cache",
+        JSON.stringify({
           userId: tweet.userId,
           tweetId: tweet.id,
-        }),
-        cache: "no-cache",
-      });
-      const data = await res.json();
+        })
+      );
 
-      setImageUrl(data.downloadUrl);
+      setImageUrl(res.downloadUrl);
     };
     fetchImage();
   }, []);

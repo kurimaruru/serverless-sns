@@ -51,9 +51,8 @@ Resources:
             Method: post
       Environment:
         Variables:
-          S3_BUCKET_NAME: "test"
+          S3_BUCKET_NAME: "twitter-like-storage"
           S3_ENDPOINT_URL: "http://minio:9999"
-          DYNAMO_ENDPOINT_URL: "http://dynamodb-local:8000"
     Metadata:
       Dockerfile: ./presigned_url/Dockerfile
       DockerContext: ./
@@ -66,11 +65,17 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
       PackageType: Image
       Events:
-        CreateTweet:
+        TweetActionCreate:
           Type: Api
           Properties:
             RestApiId: !Ref MyApi
-            Path: /api/tweet
+            Path: /api/create_tweet
+            Method: post
+        TweetActionFetch:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /api/fetch_tweet
             Method: post
       Environment:
         Variables:
@@ -109,7 +114,7 @@ Resources:
           - AllowedHeaders:
               - "*"
             AllowedMethods:
-              - POST
+              - PUT
               - GET
             AllowedOrigins:
               - !Ref Domain
@@ -122,15 +127,23 @@ Outputs:
   GenerateDownloadUrlApi:
     Description: "API Gateway endpoint URL for Prod stage for Generate Download Url function"
     Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/download_url/"
+  CreateTweetApi:
+    Description: "API Gateway endpoint URL for Prod stage for TweetAction function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/create_tweet/"
+  FetchTweetApi:
+    Description: "API Gateway endpoint URL for Prod stage for TweetAction function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/fetch_tweet/"
+
   GeneratePresignedUrlFunction:
     Description: "Generate Presigned Url Lambda Function ARN"
     Value: !GetAtt GeneratePresignedUrlFunction.Arn
-  GenerateDownloadUrlFunction:
-    Description: "Generate Download Url Lambda Function ARN"
-    Value: !GetAtt GeneratePresignedUrlFunction.Arn
+  TweetActionFunction:
+    Description: "Tweet Action Function Lambda Function ARN"
+    Value: !GetAtt TweetActionFunction.Arn
+
   GeneratePresignedUrlFunctionIamRole:
     Description: "Implicit IAM Role created for Generate Presigned Url function"
     Value: !GetAtt GeneratePresignedUrlFunctionRole.Arn
-  GenerateDownloadUrlFunctionIamRole:
-    Description: "Implicit IAM Role created for Generate Download Url function"
-    Value: !GetAtt GeneratePresignedUrlFunctionRole.Arn
+  TweetActionFunctionIamRole:
+    Description: "Implicit IAM Role created for Tweet Action Function function"
+    Value: !GetAtt TweetActionFunctionRole.Arn

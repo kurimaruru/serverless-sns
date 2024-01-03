@@ -5,6 +5,7 @@ import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import { tweetData } from "../type/types";
+import { apiClient } from "../utils/baseApi";
 
 /** tweet生成するためのhooks */
 export const useCreateTweet = (session: Session | null) => {
@@ -24,14 +25,12 @@ export const useCreateTweet = (session: Session | null) => {
       putTweetImageToStorage(uploadUrl, image as Blob);
     const tweetReqData = await createTweetRequestData(id, tweet, session);
     try {
-      const res = await fetch("http://localhost:3000/api/tweet", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(tweetReqData),
-      });
-      if (res.status !== 200) throw new Error("Failed to tweet");
+      await apiClient(
+        "/api/create_tweet",
+        "POST",
+        "no-store",
+        JSON.stringify(tweetReqData)
+      );
       router.push("/home");
     } catch (e) {
       console.log(e);
@@ -94,27 +93,13 @@ const getUploadUrl = async (
   tweetId: string
 ): Promise<string | null> => {
   if (session === null || session.user === undefined) return null;
-  if (process.env.NEXT_PUBLIC__ENV === "local") {
-    const res = await fetch("http://localhost:3000/api/getUploadUrl", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: session.user.email, tweetId }),
-    });
-    const data = await res.json();
-    return data.presignedUrl;
-  } else {
-    const res = await fetch("http://localhost:3000/api/getUploadUrl", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: session.user.email, tweetId }),
-    });
-    const data = await res.json();
-    return data.presignedUrl;
-  }
+  const response = await apiClient(
+    "/api/upload_url",
+    "POST",
+    "no-store",
+    JSON.stringify({ userId: session.user.email, tweetId })
+  );
+  return response.presignedUrl;
 };
 
 const putTweetImageToStorage = async (
