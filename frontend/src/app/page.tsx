@@ -10,7 +10,6 @@ const _Home = async () => {
   if (isValidSession(session)) {
     redirect("/home");
   }
-  console.log(isValidSession(session));
 
   return (
     <Grid

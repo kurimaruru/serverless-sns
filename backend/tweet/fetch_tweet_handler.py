@@ -7,7 +7,9 @@ def fetch_tweet_handler(payload: dict):
 
     tweets = []
     for user_id in user_ids:
-        tweet = query(table_name="Tweets", key_dict={"user_id": user_id})
-        tweets.append(tweet)
+        fetch_tweets = query(table_name="Tweets", key_dict={"user_id": user_id})
+        # fetch_tweetsの要素数だけ、tweetsにappendしていく
+        for fetch_tweet in fetch_tweets:
+            tweets.append(fetch_tweet)
 
     return {"tweets": tweets}

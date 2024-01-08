@@ -13,9 +13,13 @@ def handler(event, context):
     }
     try:
         path = event["path"]
+        print("★★★★★★★★★★★")
+        print((event["body"]))
         payload = json.loads(event["body"])
         handler = handler_mapping[path]
         result = handler(payload)
+        print("★★★★★result★★★★★★")
+        print(result)
         status_code = 200
 
     except Exception as e:

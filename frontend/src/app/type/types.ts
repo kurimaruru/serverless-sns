@@ -1,4 +1,4 @@
-export type tweetsData = tweetData[];
+export type tweetsData = { tweets: tweetData[] };
 
 export type tweetData = {
   id: string;

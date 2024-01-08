@@ -18,6 +18,9 @@ Parameters:
   TweetsTableName:
     Type: String
     Default: "Tweets"
+  LogRetentionInDays:
+    Type: Number
+    Default: 1
 
 Resources:
   MyApi:
@@ -28,7 +31,11 @@ Resources:
         - DataTraceEnabled: false
           ResourcePath: "/*"
           HttpMethod: "*"
-
+      Cors:
+        AllowOrigin: "'*'"
+        AllowCredentials: false
+        AllowMethods: "'OPTIONS,POST'"
+        AllowHeaders: "'Content-Type,X-CSRF-TOKEN,Access-Control-Allow-Origin'"
   GeneratePresignedUrlFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -52,11 +59,20 @@ Resources:
       Environment:
         Variables:
           S3_BUCKET_NAME: "twitter-like-storage"
-          S3_ENDPOINT_URL: "http://minio:9999"
+          S3_ENDPOINT_URL: "https://s3.ap-northeast-1.amazonaws.com"
     Metadata:
       Dockerfile: ./presigned_url/Dockerfile
       DockerContext: ./
       DockerTag: python3.9-v1
+
+  GeneratePresignedUrlLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${GeneratePresignedUrlFunction}
+      RetentionInDays: !Ref LogRetentionInDays
+      Tags:
+        - Key: TwitterLikeSnsDeveloper
+          Value: Green
 
   TweetActionFunction:
     Type: AWS::Serverless::Function
@@ -79,11 +95,20 @@ Resources:
             Method: post
       Environment:
         Variables:
-          DYNAMO_ENDPOINT_URL: "http://dynamodb-local:8000"
+          DYNAMO_ENDPOINT_URL: "http://dynamodb.ap-northeast-1.amazonaws.com"
     Metadata:
       Dockerfile: ./tweet/Dockerfile
       DockerContext: ./
       DockerTag: python3.9-v1
+
+  TweetActionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${TweetActionFunction}
+      RetentionInDays: !Ref LogRetentionInDays
+      Tags:
+        - Key: TwitterLikeSnsDeveloper
+          Value: Green
 
   Tweets:
     Type: AWS::DynamoDB::Table

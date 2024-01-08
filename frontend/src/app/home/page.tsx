@@ -7,8 +7,8 @@ import { useFetchTweetsData } from "./home.hooks";
 
 const TweetArea = async () => {
   const session = await fetchSession();
-
-  const { fetchTweetsData } = useFetchTweetsData();
+  // TODO: フォロー機能を実装したら、フォローしているユーザーのツイートのみを表示するようにする
+  const { fetchTweetsData } = useFetchTweetsData([session!.user!.email!]);
   const tweetsData = await fetchTweetsData();
 
   return (
