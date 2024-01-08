@@ -32,6 +32,7 @@ export const useCreateTweet = (session: Session | null) => {
         JSON.stringify(tweetReqData)
       );
       router.push("/home");
+      router.refresh();
     } catch (e) {
       console.log(e);
     }
@@ -80,7 +81,7 @@ const createTweetRequestData = async (
       imgName: tweet.tweetContent.imgName,
     },
     tweetUserAction: {
-      good: 0,
+      good: "0",
       comments: [],
     },
     userId: session.user.email!,

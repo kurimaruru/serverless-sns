@@ -2,6 +2,7 @@ import { Grid } from "@mui/material";
 import { TweetCard } from "../components/container/tweetCard/tweetCard";
 import { Footer } from "../components/elements/footer/footer";
 import { Header } from "../components/elements/header/header";
+import { NotDisplayTweet } from "../components/elements/notDisplayTweet/notDisplayTweet";
 import { fetchSession } from "../hooks/session";
 import { useFetchTweetsData } from "./home.hooks";
 
@@ -20,9 +21,13 @@ const TweetArea = async () => {
       </Grid>
       <Grid container style={{ marginTop: "60px" }}>
         <Grid item xs={12}>
-          {tweetsData.map((data) => (
-            <TweetCard key={data.id} tweet={data} session={session} />
-          ))}
+          {tweetsData.length !== 0 ? (
+            tweetsData.map((data) => (
+              <TweetCard key={data.id} tweet={data} session={session} />
+            ))
+          ) : (
+            <NotDisplayTweet session={session} />
+          )}
         </Grid>
       </Grid>
       <Grid container style={{ marginTop: "50px" }}>

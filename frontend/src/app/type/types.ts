@@ -19,7 +19,7 @@ export type tweetContent = {
 };
 
 export type userAction = {
-  good: number;
+  good: string;
   comments: string[];
 };
 

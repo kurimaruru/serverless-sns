@@ -9,6 +9,7 @@ export const useFetchTweetsData = (userIds: string[]) => {
       "no-store",
       JSON.stringify({ userIds: userIds })
     );
+    console.log("fetchTweetsDataがたたかれたよ!");
     console.log("★★★★★★★★★★★★★");
     console.log(tweetsData);
     return tweetsData.tweets;
