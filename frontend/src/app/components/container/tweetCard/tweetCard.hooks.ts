@@ -17,7 +17,7 @@ export const fetchTweetImagge = (tweet: tweetData) => {
         })
       );
 
-      setImageUrl(res.downloadUrl);
+      setImageUrl(res.presignedUrl);
     };
     fetchImage();
   }, []);

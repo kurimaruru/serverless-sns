@@ -107,18 +107,12 @@ const putTweetImageToStorage = async (
   uploadUrl: string,
   image: Blob
 ): Promise<void> => {
-  let binaryData: ArrayBuffer | null | string;
-  const reader = new FileReader();
-  reader.readAsArrayBuffer(image);
-  reader.onloadend = () => {
-    binaryData = reader.result;
-  };
   if (process.env.NEXT_PUBLIC__ENV === "local") {
     console.log("アップロード完了");
   } else {
     await fetch(uploadUrl, {
       method: "PUT",
-      body: binaryData!,
+      body: image,
     }).catch((e) => {
       throw new Error("Failed to upload image");
     });

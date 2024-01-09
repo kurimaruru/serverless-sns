@@ -13,8 +13,7 @@ Parameters:
     Default: "v1"
   Domain:
     Type: String
-    # TODO: ドメイン名を指定する
-    Default: ""
+    Default: "http://localhost:3000"
   TweetsTableName:
     Type: String
     Default: "Tweets"

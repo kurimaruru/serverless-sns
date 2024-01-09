@@ -21,7 +21,7 @@ stack_name = "twitter-like"
 s3_prefix = "twitter-like"
 region = "ap-northeast-1"
 disable_rollback = true
-parameter_overrides = "StageName=\"v1\" Domain=\"\" TweetsTableName=\"Tweets\" LogRetentionInDays=\"1\""
+parameter_overrides = "StageName=\"v1\" Domain=\"http://localhost:3000\" TweetsTableName=\"Tweets\" LogRetentionInDays=\"1\""
 
 [default.package.parameters]
 resolve_s3 = true

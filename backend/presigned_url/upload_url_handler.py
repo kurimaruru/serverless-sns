@@ -22,14 +22,7 @@ def handler(payload: dict):
     )
 
     result = {
-        "isBase64Encoded": False,
-        "statusCode": 200,
-        "headers": {},
-        "body": json.dumps(
-            {
-                "presignedUrl": generated_presigned_url,
-            }
-        ),
+        "presignedUrl": generated_presigned_url,
     }
 
     return result
