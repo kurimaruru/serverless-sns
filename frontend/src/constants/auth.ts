@@ -68,7 +68,6 @@ export const options: NextAuthOptions = {
 
       return session;
     },
-    // eslint-disable-next-line @typescript-eslint/require-await
     jwt: async ({ token, account }) => {
       if (account) {
         if (isOidcProvider(account.provider)) {

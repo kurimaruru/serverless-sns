@@ -19,7 +19,7 @@ import type { Session } from "next-auth";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { StyledMenu } from "../../elements/styledMenu/styledMenu";
-import { fetchTweetImagge } from "./tweetCard.hooks";
+import { useFetchTweetImagge } from "./tweetCard.hooks";
 
 type Props = {
   tweet: tweetData;
@@ -42,7 +42,7 @@ export const TweetCard = (props: Props) => {
     setAnchorEl(null);
   };
 
-  const { imageUrl } = fetchTweetImagge(props.tweet);
+  const { imageUrl } = useFetchTweetImagge(props.tweet);
 
   return (
     <Card>

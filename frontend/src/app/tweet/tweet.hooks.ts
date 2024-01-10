@@ -108,7 +108,7 @@ const putTweetImageToStorage = async (
   image: Blob
 ): Promise<void> => {
   if (process.env.NEXT_PUBLIC__ENV === "local") {
-    console.log("アップロード完了");
+    console.log("upload image to storage");
   } else {
     await fetch(uploadUrl, {
       method: "PUT",

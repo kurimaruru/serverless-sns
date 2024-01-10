@@ -2,7 +2,7 @@ import { tweetData } from "@/app/type/types";
 import { apiClient } from "@/app/utils/baseApi";
 import { useEffect, useState } from "react";
 
-export const fetchTweetImagge = (tweet: tweetData) => {
+export const useFetchTweetImagge = (tweet: tweetData) => {
   const [imageUrl, setImageUrl] = useState<string>("");
 
   useEffect(() => {
