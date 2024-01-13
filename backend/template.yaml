@@ -11,9 +11,6 @@ Parameters:
   StageName:
     Type: "String"
     Default: "v1"
-  Domain:
-    Type: String
-    Default: "http://localhost:3000"
   TweetsTableName:
     Type: String
     Default: "Tweets"
@@ -141,7 +138,7 @@ Resources:
               - PUT
               - GET
             AllowedOrigins:
-              - !Ref Domain
+              - "https://serverless-sns.vercel.app"
             MaxAge: 3000
 
 Outputs:

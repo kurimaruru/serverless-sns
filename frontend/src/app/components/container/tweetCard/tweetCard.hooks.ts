@@ -6,6 +6,7 @@ export const useFetchTweetImagge = (tweet: tweetData) => {
   const [imageUrl, setImageUrl] = useState<string>("");
 
   useEffect(() => {
+    if (tweet.tweetContent.imgName === "") return;
     const fetchImage = async () => {
       const res = await apiClient(
         "/api/download_url",

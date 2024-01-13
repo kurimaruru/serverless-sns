@@ -77,7 +77,7 @@ export const TweetCard = (props: Props) => {
             </StyledMenu>
           </>
         }
-        title={props.tweet.id}
+        title={props.tweet.tweetInfo.userName}
         subheader={props.tweet.tweetInfo.createdAt}
       />
       <CardContent sx={{ mr: 3, ml: 3 }}>
